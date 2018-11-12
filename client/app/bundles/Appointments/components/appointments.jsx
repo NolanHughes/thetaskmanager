@@ -1,8 +1,10 @@
 import React from 'react';
 
-import AppointmentForm from './appointment_form';
-import { AppointmentsList } from './appointments_list';
+import AppointmentForm from './AppointmentForm';
+import { AppointmentsList } from './AppointmentsList';
 import { FormErrors } from './FormErrors'
+
+import moment from 'moment'
 
 export default class Appointments extends React.Component {
   constructor (props) {
@@ -16,13 +18,15 @@ export default class Appointments extends React.Component {
     }
   }
 
-  handleUserInput (obj) {
+  handleUserInput = (obj) => {
     this.setState(obj, this.validateForm);
   }
 
   validateForm() {
     this.setState({
-      formValid: this.state.title.trim().length > 0
+      formValid: this.state.title.trim().length > 0 && 
+                 moment(this.state.appt_time).isValid() && 
+                 moment(this.state.appt_time).isAfter()
     })
   }
 
@@ -38,7 +42,7 @@ export default class Appointments extends React.Component {
     this.setState({formValid: false})
   }
 
-  handleFormSubmit () {
+  handleFormSubmit = () => {
     const appointment = {title: this.state.title, appt_time: this.state.appt_time};
     $.post('/appointments', {appointment: appointment})
     .done((data) => {
@@ -67,10 +71,10 @@ export default class Appointments extends React.Component {
     return (
       <div>
         <FormErrors formErrors={this.state.formErrors}/>
-        <AppointmentForm input_title={this.state.title}
-                         input_appt_time={this.state.appt_time}
-                         onUserInput={(obj) => this.handleUserInput(obj)}
-                         onFormSubmit={() => this.handleFormSubmit()} 
+        <AppointmentForm title={this.state.title}
+                         appt_time={this.state.appt_time}
+                         onUserInput={this.handleUserInput}
+                         onFormSubmit={this.handleFormSubmit} 
                          formValid={this.state.formValid}
         />
         <AppointmentsList appointments={this.state.appointments} />
