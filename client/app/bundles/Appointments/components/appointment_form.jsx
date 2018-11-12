@@ -40,7 +40,12 @@ export default class AppointmentForm extends React.Component {
             value={this.props.appt_time}
             onChange={(event) => this.setApptTime(event)} />
 
-          <input type='submit' value='Make Appointment' className='submit-button' />
+          <input type='submit' 
+                 value='Make Appointment' 
+                 className='submit-button' 
+                 disabled={!this.props.formValid}
+          />
+          
         </form>        
       </div>
     )
