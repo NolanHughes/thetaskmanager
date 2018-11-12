@@ -7,9 +7,10 @@
     "npm": "4.1.1"
   },
   "scripts": {
-    "build:test": "webpack --config webpack.config.js",
-    "build:production": "NODE_ENV=production webpack --config webpack.config.js",
-    "build:development": "webpack -w --config webpack.config.js"
+    "build:test": "npm run build:client && npm run build:server",
+    "build:client": "webpack --config webpack.client.rails.build.config.js",
+    "build:dev:client": "webpack -w --config webpack.client.rails.build.config.js",
+    "hot-assets": "babel-node server-rails-hot.js"
   },
   "cacheDirectories": [
     "node_modules",
@@ -29,6 +30,8 @@
     "expose-loader": "^0.7.1",
     "imports-loader": "^0.7.0",
     "immutability-helper": "2.1.1",
+    "jquery": "^3.1.1",
+    "jquery-ujs": "^1.2.2",
     "react": "^15.4.1",
     "moment": ">=2.19.3",
     "react-datetime": "2.8.3",
@@ -36,5 +39,9 @@
     "react-on-rails": "6.4.2",
     "webpack": "^1.14.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-plugin-react-transform": "^2.0.2",
+    "react-transform-hmr": "^1.0.4",
+    "webpack-dev-server": "^1.16.2"
+  }
 }
