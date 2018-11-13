@@ -1,60 +1,72 @@
 import React from 'react';
-
 import AppointmentForm from './AppointmentForm';
 import { AppointmentsList } from './AppointmentsList';
-import { FormErrors } from './FormErrors'
-
-import moment from 'moment'
+import { FormErrors } from './FormErrors';
+import moment from 'moment';
 
 export default class Appointments extends React.Component {
-  constructor (props) {
+  constructor (props, railsContext) {
     super(props)
     this.state = {
       appointments: this.props.appointments,
-      title: '',
-      appt_time: '',
+      title: {value: '', valid: false},
+      appt_time: {value: '', valid: false},
       formErrors: {},
       formValid: false
     }
   }
 
-  handleUserInput = (obj) => {
-    this.setState(obj, this.validateForm);
+  handleUserInput = (fieldName, fieldValue) => {
+    const newFieldState = {value: fieldValue, valid: this.state[fieldName].valid}
+
+    this.setState({[fieldName]: newFieldState},
+                  () => { this.validateField(fieldName, fieldValue) });
   }
 
-  validateForm() {
-    this.setState({
-      formValid: this.state.title.trim().length > 0 && 
-                 moment(this.state.appt_time).isValid() && 
-                 moment(this.state.appt_time).isAfter()
-    })
+  validateField (fieldName, fieldValue) {
+    let fieldValid;
+    switch (fieldName) {
+      case 'title':
+        fieldValue = this.state.title.value.trim().length > 0
+        break;
+      case 'appt_time':
+        var date = new Date()
+
+        if (date < this.state.appt_time.value) {
+          fieldValue = true
+        } else {
+          fieldValue = false
+        }
+      default:
+        break;
+    }
+    const newFieldState = {value: this.state[fieldName].value, valid: fieldValue}
+
+    this.setState({[fieldName]: newFieldState}, this.validateForm);
+  }
+
+  validateForm () {
+    this.setState({formValid: this.state.title.valid &&
+                              this.state.appt_time.valid
+                  });
+  }
+
+  handleFormSubmit = () => {
+    const appointment = {title: this.state.title.value,
+                         appt_time: this.state.appt_time.value};
+    $.post('/appointments',
+            {appointment: appointment})
+          .done((data) => {
+            this.addNewAppointment(data);
+            this.resetFormErrors();
+          })
+          .fail((response) => {
+            this.setState({formErrors: response.responseJSON})
+          });
   }
 
   resetFormErrors () {
     this.setState({formErrors: {}})
-  }
-
-  resetFormTitle() {
-    this.setState({title: ''})
-  }
-
-  resetFormValid() {
-    this.setState({formValid: false})
-  }
-
-  handleFormSubmit = () => {
-    const appointment = {title: this.state.title, appt_time: this.state.appt_time};
-    $.post('/appointments', {appointment: appointment})
-    .done((data) => {
-      this.addNewAppointment(data);
-      this.resetFormErrors();
-      this.resetFormTitle();
-      this.resetFormValid();
-    })
-    .fail((response) => {
-      console.log(response);
-      this.setState({formErrors: response.responseJSON})
-    });
   }
 
   addNewAppointment(appointment) {
@@ -70,13 +82,12 @@ export default class Appointments extends React.Component {
   render () {
     return (
       <div>
-        <FormErrors formErrors={this.state.formErrors}/>
+        <FormErrors formErrors = {this.state.formErrors} />
         <AppointmentForm title={this.state.title}
-                         appt_time={this.state.appt_time}
-                         onUserInput={this.handleUserInput}
-                         onFormSubmit={this.handleFormSubmit} 
-                         formValid={this.state.formValid}
-        />
+          appt_time={this.state.appt_time}
+          formValid = {this.state.formValid}
+          onUserInput={this.handleUserInput}
+          onFormSubmit={this.handleFormSubmit} />
         <AppointmentsList appointments={this.state.appointments} />
       </div>
     )
