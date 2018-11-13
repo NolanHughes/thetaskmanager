@@ -4,6 +4,8 @@ import { AppointmentsList } from './AppointmentsList';
 import { FormErrors } from './FormErrors';
 import moment from 'moment';
 
+import update from 'immutability-helper';
+
 export default class Appointments extends React.Component {
   constructor (props, railsContext) {
     super(props)
@@ -25,9 +27,16 @@ export default class Appointments extends React.Component {
 
   validateField (fieldName, fieldValue) {
     let fieldValid;
+    let fieldErrors = [];
+
+
     switch (fieldName) {
       case 'title':
-        fieldValue = this.state.title.value.trim().length > 0
+        fieldValue = this.state.title.value.trim().length > 2
+
+        if (!fieldValue) {
+          fieldErrors = [' should be at least 3 characters long'];
+        }
         break;
       case 'appt_time':
         var date = new Date()
@@ -36,19 +45,26 @@ export default class Appointments extends React.Component {
           fieldValue = true
         } else {
           fieldValue = false
+          fieldErrors = [' should not be in the past'];
         }
       default:
         break;
     }
     const newFieldState = {value: this.state[fieldName].value, valid: fieldValue}
+    const newFormErrors = update(this.state.formErrors,
+                                  {$merge: {[fieldName]: fieldErrors}});
 
-    this.setState({[fieldName]: newFieldState}, this.validateForm);
+    this.setState({
+      [fieldName]: newFieldState,
+      formErrors: newFormErrors
+    }, this.validateForm);
   }
 
   validateForm () {
-    this.setState({formValid: this.state.title.valid &&
-                              this.state.appt_time.valid
-                  });
+    this.setState({
+      formValid: this.state.title.valid &&
+                 this.state.appt_time.valid
+    });
   }
 
   handleFormSubmit = () => {
