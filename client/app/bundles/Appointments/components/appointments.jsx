@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import AppointmentForm from './AppointmentForm';
 import { AppointmentsList } from './AppointmentsList';
 import { FormErrors } from './FormErrors';
@@ -7,12 +7,16 @@ import moment from 'moment';
 import update from 'immutability-helper';
 
 export default class Appointments extends React.Component {
+  static propTypes = {
+    appointments: PropTypes.array.isRequired
+  }
+
   constructor (props, railsContext) {
     super(props)
     this.state = {
       appointments: this.props.appointments,
       title: {value: '', valid: false},
-      appt_time: {value: '', valid: false},
+      appt_time: {value: new Date(), valid: false},
       formErrors: {},
       formValid: false
     }
