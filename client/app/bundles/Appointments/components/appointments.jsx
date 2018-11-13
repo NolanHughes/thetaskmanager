@@ -18,41 +18,27 @@ export default class Appointments extends React.Component {
     }
   }
 
-  handleUserInput = (fieldName, fieldValue) => {
+  handleUserInput = (fieldName, fieldValue, validations) => {
     const newFieldState = {value: fieldValue, valid: this.state[fieldName].valid}
 
     this.setState({[fieldName]: newFieldState},
-                  () => { this.validateField(fieldName, fieldValue) });
+                  () => { this.validateField(fieldName, fieldValue, validations) });
   }
 
-  validateField (fieldName, fieldValue) {
+  validateField (fieldName, fieldValue, validations) {
     let fieldValid;
-    let fieldErrors = [];
+    let fieldErrors = validations.reduce((errors, v) => {
+      let e = v(fieldValue);
+      if (e != '') {
+        errors.push(e);
+      }
+      return(errors);
+    }, []);
+    
+    fieldValue = fieldErrors.length === 0;
 
-
-    switch (fieldName) {
-      case 'title':
-        fieldValue = this.state.title.value.trim().length > 2
-
-        if (!fieldValue) {
-          fieldErrors = [' should be at least 3 characters long'];
-        }
-        break;
-      case 'appt_time':
-        var date = new Date()
-
-        if (date < this.state.appt_time.value) {
-          fieldValue = true
-        } else {
-          fieldValue = false
-          fieldErrors = [' should not be in the past'];
-        }
-      default:
-        break;
-    }
     const newFieldState = {value: this.state[fieldName].value, valid: fieldValue}
-    const newFormErrors = update(this.state.formErrors,
-                                  {$merge: {[fieldName]: fieldErrors}});
+    const newFormErrors = update(this.state.formErrors, {$merge: {[fieldName]: fieldErrors}});
 
     this.setState({
       [fieldName]: newFieldState,
