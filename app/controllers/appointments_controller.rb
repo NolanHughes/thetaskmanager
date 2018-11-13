@@ -13,6 +13,11 @@ class AppointmentsController < ApplicationController
     end
   end
 
+  def show
+    @appointment = Appointment.find(params[:id])
+    render json: @appointment
+  end
+
   private
   def appointment_params
     params.require(:appointment).permit(:title, :appt_time)

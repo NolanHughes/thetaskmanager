@@ -1,13 +1,47 @@
 import React, { PropTypes } from 'react';
+import { Link } from 'react-router-dom'
 
 import {formatDate} from '../utils/format';
 
-export const Appointment = ({appointment}) =>
-  <div className='appointment'>
-    <h3>{appointment.title}</h3>
-    <p>{formatDate(appointment.appt_time)}</p>
-  </div>
+export default class Appointment extends React.Component {
+  constructor(props) {
+  	super(props)
 
-Appointment.propTypes = {
-	appointment: PropTypes.object.isRequired
+  	this.state = {
+  		appointment: props.appointment
+  	}
+  }
+
+  componentDidMount() {
+  	if(this.props.match) {
+	  	$.ajax({
+	  		type: "GET",
+	  		url: `/appointments/${this.props.match.params.id}`,
+	  		dataType: "JSON"
+	  	}).done((data) => {
+	  		this.setState({
+	  			appointment: data
+	  		})
+	  	})
+	  }
+  }
+  
+  static propTypes = {
+		appointment: PropTypes.object.isRequired
+	}
+
+	static defaultProps = { 
+		appointment: {}
+	}
+
+	render() {
+		return(
+		  <div className='appointment'>
+		  	<Link to={`/appointments/${this.state.appointment.id}`}>
+		    	<h3>{this.state.appointment.title}</h3>
+		    </Link>
+		   	<p>{formatDate(this.state.appointment.appt_time)}</p>
+		  </div>
+	  )
+	}
 }
