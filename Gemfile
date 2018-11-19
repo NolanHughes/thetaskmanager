@@ -56,11 +56,7 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'haml'
-
 gem 'react_on_rails', '~>6'
-
 gem 'foreman'
-
 gem 'webpacker'
-
-# gem 'mini_racer', platforms: :ruby
+gem 'rack-cors', require: 'rack/cors'
