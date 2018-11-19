@@ -3,7 +3,7 @@ import Datetime from 'react-datetime';
 import moment from 'moment';
 import update from 'immutability-helper';
 
-import {validations} from '../utils/validations'
+import { validations } from '../utils/validations'
 import { FormErrors } from './FormErrors';
 
 export default class AppointmentForm extends React.Component {
@@ -78,8 +78,7 @@ export default class AppointmentForm extends React.Component {
 
   validateForm () {
     this.setState({
-      formValid: this.state.title.valid &&
-                 this.state.appt_time.valid
+      formValid: this.state.title.valid && this.state.appt_time.valid
     });
   }
 
@@ -131,6 +130,22 @@ export default class AppointmentForm extends React.Component {
       });
   }
 
+  deleteAppointment = () => {
+    if(confirm("Are you sure you want to delete this appointment?")){
+      $.ajax({
+        type: 'DELETE',
+        url: `/appointments/${this.props.match.params.id}`
+      })
+        .done((data) => {
+          this.props.history.push('/')
+          this.resetFormErrors();
+        })
+        .fail((response) => {
+          console.log('Appointment deleting failed')
+        });
+    }
+  }
+
   handleChange = (e) => {
     const fieldName = e.target.name;
     const fieldValue = e.target.value;
@@ -180,8 +195,12 @@ export default class AppointmentForm extends React.Component {
             className='submit-button' 
             disabled={!this.state.formValid}
           />
-
-        </form>        
+        </form>
+          {this.state.editing && (
+            <p>
+              <button onClick={this.deleteAppointment}>Delete Appointment</button>
+            </p>
+          )}
       </div>
     )
   }

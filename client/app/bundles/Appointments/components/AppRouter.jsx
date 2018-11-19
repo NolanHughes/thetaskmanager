@@ -11,9 +11,7 @@ export default (props) => {
 		<Router> 
 			<div>
 				<AppHeader path="/" component={AppHeader}/>
-				<Route exact path="/" render={routeProps => (
-					<Appointments {...routeProps} appointments={props.appointments} />
-				)} />
+				<Route exact path="/" component={Appointments} />
 				<Route exact path="/appointments/:id" component={Appointment} />
 				<Route path="/appointments/:id/edit" component={AppointmentForm} />
 			</div>
