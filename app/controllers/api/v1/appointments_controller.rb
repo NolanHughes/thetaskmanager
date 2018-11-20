@@ -18,11 +18,7 @@ class Api::V1::AppointmentsController < ApplicationController
 
   def show
     @appointment = Appointment.find(params[:id])
-
-    respond_to do |format|
-      format.html { render :index }
-      format.json { render json: @appointment }
-    end
+    render json: @appointment
   end
 
   def edit
