@@ -8,7 +8,7 @@ end
 ruby '2.4.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.0.1'
+gem 'rails', '~> 5.0.2'
 # Use Puma as the app server
 gem 'puma', '~> 3.12'
 # Use SCSS for stylesheets
@@ -62,3 +62,4 @@ gem 'react_on_rails', '~>6'
 gem 'foreman'
 gem 'webpacker'
 gem 'rack-cors', require: 'rack/cors'
+gem 'devise_token_auth'
