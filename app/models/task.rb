@@ -1,5 +1,5 @@
 class Task < ApplicationRecord
-	validates_presence_of :title, :due_by
+	validates_presence_of :title, :due_by, :assigned_to_id
 	validate :due_by_cannot_be_in_the_past
 
 	belongs_to :user
