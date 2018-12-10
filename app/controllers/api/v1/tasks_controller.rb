@@ -3,9 +3,10 @@ class Api::V1::TasksController < ApplicationController
 
   def index
     @tasks = current_user.tasks.order('due_by ASC')
+    @users = User.all # Change to current team
     @task = Task.new
 
-    render json: @tasks
+    render json: {tasks: @tasks, users: @users}
   end
 
   def create
