@@ -2,9 +2,8 @@ class Api::V1::TasksController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @your_tasks = current_user.tasks.where("assigned_to_id = '#{current_user.id}'").order('due_by ASC')
+    @your_tasks = Task.all.where(:assigned_to_id => current_user.id).order('due_by ASC')
     @assigned_tasks = current_user.tasks.where("assigned_to_id != '#{current_user.id}'").order('due_by ASC')
-
     @users = User.all # Change to current team
 
     render json: {your_tasks: @your_tasks, assigned_tasks: @assigned_tasks, users: @users}
@@ -21,7 +20,7 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def show
-    @task = current_user.tasks.find(params[:id])
+    @task = Task.all.find(params[:id])
     render json: @task
   end
 
@@ -30,7 +29,7 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def update
-    @task = current_user.tasks.find(params[:id])
+    @task = Task.all.find(params[:id])
     
     if @task.update(task_params)
       render json: @task
@@ -40,7 +39,7 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def destroy
-    @task = current_user.tasks.find(params[:id])
+    @task = Task.all.find(params[:id])
 
     if @task.destroy
       head :no_content, status: :ok
