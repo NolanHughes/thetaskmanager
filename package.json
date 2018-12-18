@@ -7,9 +7,8 @@
     "npm": "4.1.1"
   },
   "scripts": {
-    "postinstall": "cd ./client && npm install",
-    "build:clean": "rm -r app/assets/webpack/* || true",
-    "build:dev:client": "(cd client && npm run build:dev:client --silent)",
-    "hot-assets": "(cd client && npm run hot-assets)"
+    "build": "cd client && npm install && npm run build && cd ..",
+    "deploy": "cp -a client/build/. public/",
+    "postinstall": "npm run build && npm run deploy && echo 'Client built!'"
   }
 }
