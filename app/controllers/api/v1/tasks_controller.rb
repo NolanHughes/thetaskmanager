@@ -50,7 +50,7 @@ class Api::V1::TasksController < ApplicationController
 
   private
     def task_params
-      params.require(:task).permit(:title, :due_by, :assigned_to_id, :category_id)
+      params.require(:task).permit(:title, :due_by, :assigned_to_id, :category_id, :notes, :recurring)
     end
 end
 
